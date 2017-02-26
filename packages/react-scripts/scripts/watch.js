@@ -26,12 +26,13 @@ var difference = require('lodash/difference');
 var config = require('../config/webpack.config.watch');
 var paths = require('../config/paths');
 
+var clearConsole = require('react-dev-utils/clearConsole');
 var checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 var formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
-var printFileSizes = require('react-dev-utils/printFileSizes')(paths);
-var copyPublicFolder = require('react-dev-utils/copyPublicFolder')(paths);
-var removeFileNameHash = require('react-dev-utils/removeFileNameHash')(paths);
-var clearConsole = require('react-dev-utils/clearConsole');
+
+var printFileSizes = require('../utils/printFileSizes');
+var copyPublicFolder = require('../utils/copyPublicFolder');
+var removeFileNameHash = require('../utils/removeFileNameHash');
 
 var useYarn = fs.existsSync(paths.yarnLockFile);
 var cli = useYarn ? 'yarn' : 'npm';

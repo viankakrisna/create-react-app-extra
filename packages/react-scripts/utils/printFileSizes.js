@@ -4,10 +4,10 @@ var chalk = require('chalk');
 var filesize = require('filesize');
 var stripAnsi = require('strip-ansi');
 var gzipSize = require('gzip-size').sync;
-
+var paths = require('../config/paths');
 // Print a detailed summary of build files.
-module.exports = paths => function printFileSizes(stats, previousSizeMap) {
-  var removeFileNameHash = require('./removeFileNameHash')(paths);
+module.exports = function printFileSizes(stats, previousSizeMap) {
+  var removeFileNameHash = require('./removeFileNameHash');
   var getDifferenceLabel = require('./getDifferenceLabel');
   var assets = stats
     .toJson()
