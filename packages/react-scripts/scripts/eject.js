@@ -60,7 +60,11 @@ prompt(
     path.join('scripts', 'build.js'),
     path.join('scripts', 'start.js'),
     path.join('scripts', 'test.js'),
-    path.join('scripts', 'watch.js')
+    path.join('scripts', 'watch.js'),
+    path.join('utils', 'copyPublicFolder.js'),
+    path.join('utils', 'getDifferenceLabel.js'),
+    path.join('utils', 'printFileSizes.js'),
+    path.join('utils', 'removeFileNameHash.js'),
   ];
 
   // Ensure that the app folder is clean and we won't override any files
