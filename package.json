@@ -8,6 +8,7 @@
     "postinstall": "lerna bootstrap",
     "publish": "tasks/release.sh",
     "start": "node packages/react-scripts/scripts/start.js",
+    "watch": "node packages/react-scripts/scripts/watch.js",
     "test": "node packages/react-scripts/scripts/test.js --env=jsdom"
   },
   "devDependencies": {

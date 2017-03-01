@@ -60,9 +60,14 @@ prompt(
     path.join('scripts', 'build.js'),
     path.join('scripts', 'start.js'),
     path.join('scripts', 'test.js'),
+    path.join('scripts', 'watch.js'),
     path.join('utils', 'bundleVendorIfStale.js'),
+    path.join('utils', 'copyPublicFolder.js'),
+    path.join('utils', 'getDifferenceLabel.js'),
     path.join('utils', 'packageJsonMd5.js'),
     path.join('utils', 'printErrors.js'),
+    path.join('utils', 'printFileSizes.js'),
+    path.join('utils', 'removeFileNameHash.js'),
     path.join('utils', 'vendorHash.js'),
   ];
 
