@@ -8,34 +8,36 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 // @remove-on-eject-end
+process.env.NODE_ENV = "development";
 
 // Load environment variables from .env file. Suppress warnings using silent
 // if this file is missing. dotenv will never modify any environment variables
 // that have already been set.
 // https://github.com/motdotla/dotenv
-require('dotenv').config({ silent: true });
+require("dotenv").config({ silent: true });
 
-var chalk = require('chalk');
-var fs = require('fs-extra');
-var path = require('path');
-var gzipSize = require('gzip-size').sync;
-var webpack = require('webpack');
-var readFilesInFolder = require('recursive-readdir');
-var difference = require('lodash/difference');
+var chalk = require("chalk");
+var fs = require("fs-extra");
+var path = require("path");
+var gzipSize = require("gzip-size").sync;
+var webpack = require("webpack");
+var readFilesInFolder = require("recursive-readdir");
+var difference = require("lodash/difference");
 
-var config = require('../config/webpack.config.watch');
-var paths = require('../config/paths');
+var config = require("../config/webpack.config.watch");
+var paths = require("../config/paths");
 
-var clearConsole = require('react-dev-utils/clearConsole');
-var checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-var formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+var clearConsole = require("react-dev-utils/clearConsole");
+var checkRequiredFiles = require("react-dev-utils/checkRequiredFiles");
+var formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
 
-var printFileSizes = require('../utils/printFileSizes');
-var copyPublicFolder = require('../utils/copyPublicFolder');
-var removeFileNameHash = require('../utils/removeFileNameHash');
+var printFileSizes = require("../utils/printFileSizes");
+var copyPublicFolder = require("../utils/copyPublicFolder");
+var removeFileNameHash = require("../utils/removeFileNameHash");
+var bundleVendorIfStale = require("../utils/bundleVendorIfStale");
 
 var useYarn = fs.existsSync(paths.yarnLockFile);
-var cli = useYarn ? 'yarn' : 'npm';
+var cli = useYarn ? "yarn" : "npm";
 var isInteractive = process.stdout.isTTY;
 var echo = console.log; //alias console.log for easier printing
 
@@ -46,7 +48,9 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 
 // First, read the current file sizes in build directory.
 // This lets us display how much they changed later.
-readFilesInFolder(paths.appBuild, startWatchWithPreviousSizeMap);
+bundleVendorIfStale(() => {
+  readFilesInFolder(paths.appBuild, startWatchWithPreviousSizeMap);
+});
 
 function startWatchWithPreviousSizeMap(err, fileNames) {
   // Start the webpack watch mode
@@ -59,18 +63,18 @@ function watch(previousSizeMap) {
   var watcher = webpack(config, (err, stats) => {});
   var compiler = watcher.compiler;
 
-  echo('Compiling ' + process.env.NODE_ENV + ' build...');
+  echo("Compiling " + process.env.NODE_ENV + " build...");
   compiler.plugin(
-    'done',
+    "done",
     createCompilerDoneHandler(previousSizeMap, isFirstCompile)
   );
-  compiler.plugin('invalid', handleCompilerInvalid);
+  compiler.plugin("invalid", handleCompilerInvalid);
 }
 
 function handleCompilerInvalid() {
   clearConsoleIfInteractive();
 
-  echo('Compiling...');
+  echo("Compiling...");
 }
 
 function createCompilerDoneHandler(previousSizeMap, isFirstCompile) {
@@ -85,7 +89,7 @@ function createCompilerDoneHandler(previousSizeMap, isFirstCompile) {
 
 function cleanUpAndPrintMessages(stats, previousSizeMap, isFirstCompile) {
   return (err, fileNames) => {
-    deleteStaleFiles(fileNames, stats); // Delete stale files
+    deleteStaleAssets(fileNames, stats); // Delete stale files
     copyPublicFolder(); // Update public folder
 
     var messages = formatWebpackMessages(stats.toJson({}, true));
@@ -116,7 +120,7 @@ function cleanUpAndPrintMessages(stats, previousSizeMap, isFirstCompile) {
 }
 
 function printErrors(messages) {
-  echo(chalk.red('Failed to compile.'));
+  echo(chalk.red("Failed to compile."));
   echo();
   messages.errors.forEach(message => {
     echo(message);
@@ -133,53 +137,53 @@ function printWatchSuccessMessage(
   echo(
     [
       chalk.green(
-        'Successfully compiled a ' + process.env.NODE_ENV + ' build.'
+        "Successfully compiled a " + process.env.NODE_ENV + " build."
       ),
-      '',
-      'You can access the compiled files in',
+      "",
+      "You can access the compiled files in",
       paths.appBuild,
-      '',
-      'File sizes after gzip:',
-      ''
-    ].join('\n')
+      "",
+      "File sizes after gzip:",
+      ""
+    ].join("\n")
   );
   printFileSizes(stats, previousSizeMap);
   if (isFirstCompile) {
     echo(
       chalk.yellow(
         [
-          '',
-          'Note that running in watch mode is slower and only recommended if you need to',
-          'serve the assets with your own back-end in development.',
-          ''
-        ].join('\n')
+          "",
+          "Note that running in watch mode is slower and only recommended if you need to",
+          "serve the assets with your own back-end in development.",
+          ""
+        ].join("\n")
       )
     );
     echo(
-      'To create a development server, use ' + chalk.cyan(cli + ' start') + '.'
+      "To create a development server, use " + chalk.cyan(cli + " start") + "."
     );
     isFirstCompile = false;
   }
 }
 
 function printWarnings(messages) {
-  echo(chalk.yellow('Compiled with warnings.'));
+  echo(chalk.yellow("Compiled with warnings."));
   echo();
   messages.warnings.forEach(message => {
     echo(message);
     echo();
   });
   // Teach some ESLint tricks.
-  echo('You may use special comments to disable some warnings.');
+  echo("You may use special comments to disable some warnings.");
   echo(
-    'Use ' +
-      chalk.yellow('// eslint-disable-next-line') +
-      ' to ignore the next line.'
+    "Use " +
+      chalk.yellow("// eslint-disable-next-line") +
+      " to ignore the next line."
   );
   echo(
-    'Use ' +
-      chalk.yellow('/* eslint-disable */') +
-      ' to ignore all warnings in a file.'
+    "Use " +
+      chalk.yellow("/* eslint-disable */") +
+      " to ignore all warnings in a file."
   );
 }
 
@@ -199,16 +203,21 @@ function previousSizeMapReducer(memo, fileName) {
 function printWaitingChanges() {
   echo();
   echo(
-    'Waiting for changes in',
-    paths.appSrc.replace(process.cwd(), '.') + '/'
+    "Waiting for changes in",
+    paths.appSrc.replace(process.cwd(), ".") + "/"
   );
 }
 
-function deleteStaleFiles(fileNames, stats) {
-  return difference(
-    fileNames,
-    stats.toJson().assets.map(asset => path.join(paths.appBuild, asset.name))
+function deleteStaleAssets(fileNames, stats) {
+  var assets = stats.toJson().assets;
+  var assetFileNames = assets
+    .map(asset => path.join(paths.appBuild, asset.name))
+    .filter(Boolean);
+  var differences = difference(
+    assetFileNames,
+    fileNames
   ).map(file => fs.unlinkSync(file));
+  return differences;
 }
 
 function getPreviousSizeMap(fileNames) {

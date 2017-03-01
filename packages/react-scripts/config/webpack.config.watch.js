@@ -16,6 +16,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var ManifestPlugin = require('webpack-manifest-plugin');
 var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 var paths = require('./paths');
+var vendorHash = require('../utils/vendorHash');
 var getClientEnvironment = require('./env');
 var isProduction = require('react-dev-utils/isProduction');
 
@@ -231,6 +232,10 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.DllReferencePlugin({
+      context: '.',
+      manifest: require(path.join(paths.vendorPath, vendorHash + '.json'))
+    }),
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
