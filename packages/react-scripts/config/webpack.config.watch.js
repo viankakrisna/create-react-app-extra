@@ -119,20 +119,17 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         enforce: 'pre',
-        use: [
-          {
+        use: [{
+          options: {
             // @remove-on-eject-begin
             // Point ESLint to our predefined config.
-            options: {
-              // TODO: consider separate config for production,
-              // e.g. to enable no-console and no-debugger only in production.
-              configFile: path.join(__dirname, '../.eslintrc'),
-              useEslintrc: false
-            },
+            configFile: path.join(__dirname, '../.eslintrc'),
+            useEslintrc: false,
             // @remove-on-eject-end
-            loader: 'eslint-loader'
-          }
-        ],
+            cache: true
+          },
+          loader: 'eslint-loader-fs-cache'
+        }],
         include: paths.appSrc
       },
       // ** ADDING/UPDATING LOADERS **
