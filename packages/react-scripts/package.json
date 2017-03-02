@@ -1,6 +1,6 @@
 {
   "name": "react-scripts-extra",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Configuration and scripts for Create React App with extra features.",
   "repository": "viankakrisna/create-react-app/tree/extra",
   "license": "BSD-3-Clause",
@@ -10,7 +10,15 @@
   "bugs": {
     "url": "https://github.com/facebookincubator/create-react-app/issues"
   },
-  "files": [".babelrc", ".eslintrc", "bin", "config", "scripts", "template", "utils"],
+  "files": [
+    ".babelrc",
+    ".eslintrc",
+    "bin",
+    "config",
+    "scripts",
+    "template",
+    "utils"
+  ],
   "bin": {
     "react-scripts": "./bin/react-scripts.js"
   },
