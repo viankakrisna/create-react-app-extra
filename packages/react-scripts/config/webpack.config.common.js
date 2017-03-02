@@ -9,20 +9,20 @@
  */
 // @remove-on-eject-end
 
-var autoprefixer = require('autoprefixer');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var ManifestPlugin = require('webpack-manifest-plugin');
-var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-var paths = require('./paths');
-var vendorHash = require('../utils/vendorHash');
-var getClientEnvironment = require('./env');
-var isProduction = require('react-dev-utils/isProduction');
+var autoprefixer = require("autoprefixer");
+var webpack = require("webpack");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var ManifestPlugin = require("webpack-manifest-plugin");
+var InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
+var paths = require("./paths");
+var vendorHash = require("../utils/vendorHash");
+var getClientEnvironment = require("./env");
+var isProduction = require("../utils/isProduction");
 
 // @remove-on-eject-begin
 // `path` is not used after eject - see https://github.com/facebookincubator/create-react-app/issues/1174
-var path = require('path');
+var path = require("path");
 // @remove-on-eject-end
 
 // Webpack uses `publicPath` to determine where the app is being served from.
@@ -30,7 +30,7 @@ var path = require('path');
 var publicPath = paths.servedPath;
 // Some apps do not use client-side routing with pushState.
 // For these, "homepage" can be set to "." to enable relative asset paths.
-var shouldUseRelativeAssetPaths = publicPath === './';
+var shouldUseRelativeAssetPaths = publicPath === "./";
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
@@ -39,9 +39,9 @@ var publicUrl = publicPath.slice(0, -1);
 var env = getClientEnvironment(publicUrl);
 
 // Note: defined here because it will be used more than once.
-const cssFilename = 'static/css/' +
+const cssFilename = "static/css/" +
   process.env.NODE_ENV +
-  '.[name].[contenthash:8].css';
+  ".[name].[contenthash:8].css";
 
 // ExtractTextPlugin expects the build output to be flat.
 // (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
@@ -49,7 +49,7 @@ const cssFilename = 'static/css/' +
 // To have this structure working with relative paths, we have to use custom options.
 const extractTextPluginOptions = shouldUseRelativeAssetPaths
   ? // Making sure that the publicPath goes back to to build folder.
-    { publicPath: Array(cssFilename.split('/').length).join('../') }
+    { publicPath: Array(cssFilename.split("/").length).join("../") }
   : {};
 
 // This is the watching configuration.
@@ -61,16 +61,16 @@ module.exports = {
     // We placed these paths second because we want `node_modules` to "win"
     // if there are any conflicts. This matches Node resolution mechanism.
     // https://github.com/facebookincubator/create-react-app/issues/253
-    modules: ['node_modules'].concat(paths.nodePaths),
+    modules: ["node_modules"].concat(paths.nodePaths),
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
     // some tools, although we do not recommend using it, see:
     // https://github.com/facebookincubator/create-react-app/issues/290
-    extensions: ['.js', '.json', '.jsx'],
+    extensions: [".js", ".json", ".jsx"],
     alias: {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-      'react-native': 'react-native-web'
+      "react-native": "react-native-web"
     }
   },
   // @remove-on-eject-begin
@@ -94,18 +94,20 @@ module.exports = {
       // It's important to do this before Babel processes the JS.
       {
         test: /\.(js|jsx)$/,
-        enforce: 'pre',
-        use: [{
-          options: {
-            // @remove-on-eject-begin
-            // Point ESLint to our predefined config.
-            configFile: path.join(__dirname, '../.eslintrc'),
-            useEslintrc: false,
-            // @remove-on-eject-end
-            cache: true
-          },
-          loader: 'eslint-loader-fs-cache'
-        }],
+        enforce: "pre",
+        use: [
+          {
+            options: {
+              // @remove-on-eject-begin
+              // Point ESLint to our predefined config.
+              configFile: path.join(__dirname, "../.eslintrc"),
+              useEslintrc: false,
+              // @remove-on-eject-end
+              cache: true
+            },
+            loader: "eslint-loader-fs-cache"
+          }
+        ],
         include: paths.appSrc
       },
       // ** ADDING/UPDATING LOADERS **
@@ -118,11 +120,11 @@ module.exports = {
       // Otherwise, it acts like the "file" loader.
       {
         exclude: [/\.html$/, /\.(js|jsx)$/, /\.css$/, /\.json$/, /\.svg$/],
-        loader: 'url-loader',
+        loader: "url-loader",
         options: {
           limit: 10000,
           name: (
-            'static/media/' + process.env.NODE_ENV + '.[name].[hash:8].[ext]'
+            "static/media/" + process.env.NODE_ENV + ".[name].[hash:8].[ext]"
           )
         }
       },
@@ -130,14 +132,16 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
-        loader: 'babel-loader',
+        loader: "babel-loader",
         // @remove-on-eject-begin
         options: {
           babelrc: false,
-          presets: [require.resolve('babel-preset-react-app'), require.resolve('babel-preset-stage-0')],
-          plugins: [require.resolve('babel-plugin-transform-decorators-legacy')],
+          presets: [
+            require.resolve("babel-preset-react-app"),
+            require.resolve("babel-preset-stage-0")
+          ],
+          plugins: [require.resolve("babel-plugin-transform-decorators-legacy")]
         }
-
         // @remove-on-eject-end
       },
       // The notation here is somewhat confusing.
@@ -157,26 +161,26 @@ module.exports = {
         loader: ExtractTextPlugin.extract(
           Object.assign(
             {
-              fallback: 'style-loader',
+              fallback: "style-loader",
               use: [
                 {
-                  loader: 'css-loader',
+                  loader: "css-loader",
                   options: {
                     importLoaders: 1
                   }
                 },
                 {
-                  loader: 'postcss-loader',
+                  loader: "postcss-loader",
                   options: {
-                    ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                    ident: "postcss", // https://webpack.js.org/guides/migrating/#complex-options
                     plugins: function() {
                       return [
                         autoprefixer({
                           browsers: [
-                            '>1%',
-                            'last 4 versions',
-                            'Firefox ESR',
-                            'not ie < 9' // React doesn't support IE8 anyway
+                            ">1%",
+                            "last 4 versions",
+                            "Firefox ESR",
+                            "not ie < 9" // React doesn't support IE8 anyway
                           ]
                         })
                       ];
@@ -188,27 +192,27 @@ module.exports = {
             extractTextPluginOptions
           )
         )
-
         // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
       },
       // "file" loader for svg
       {
         test: /\.svg$/,
-        loader: 'file-loader',
+        loader: "file-loader",
         options: {
           name: (
-            'static/media/' + process.env.NODE_ENV + '.[name].[hash:8].[ext]'
+            "static/media/" + process.env.NODE_ENV + ".[name].[hash:8].[ext]"
           )
         }
       }
+
       // ** STOP ** Are you adding a new loader?
       // Remember to add the new extension(s) to the "url" loader exclusion list.
     ]
   },
   plugins: [
     new webpack.DllReferencePlugin({
-      context: '.',
-      manifest: require(path.join(paths.vendorPath, vendorHash + '.json'))
+      context: ".",
+      manifest: require(path.join(paths.vendorPath, vendorHash + ".json"))
     }),
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
@@ -269,7 +273,7 @@ module.exports = {
     // having to parse `index.html`.
     // We also read this file to delete stale files in build folder
     new ManifestPlugin({
-      fileName: 'asset-manifest.json'
+      fileName: "asset-manifest.json"
     })
-  ].filter(Boolean), // remove falsy plugin on development
+  ].filter(Boolean) // remove falsy plugin on development
 };

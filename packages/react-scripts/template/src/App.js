@@ -1,31 +1,31 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import s from './App.css';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import s from "./App.css";
 
 // decorators
-function addProps(props){
+function addProps(props) {
   return Component => class AddedProps extends React.Component {
-    render(){
-      return <Component {...props} />
+    render() {
+      return <Component {...props} />;
     }
-  }
+  };
 }
 
-@addProps({name: 'Foo Bar'})
+@addProps({ name: "Foo Bar" })
 class App extends Component {
   state = {
     counter: 0
-  }
-  increment = () =>{
+  };
+  increment = () => {
     this.setState({
       counter: this.state.counter + 1
-    })
-  }
-  decrement = () =>{
+    });
+  };
+  decrement = () => {
     this.setState({
       counter: this.state.counter - 1
-    })
-  }
+    });
+  };
   render() {
     return (
       <div className={s.app}>
