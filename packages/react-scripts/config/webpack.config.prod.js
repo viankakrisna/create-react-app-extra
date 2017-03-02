@@ -58,7 +58,7 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
-module.exports = {
+module.exports = Object.assign(common, {
   // Don't attempt to continue if there are any errors.
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
@@ -161,7 +161,8 @@ module.exports = {
         // @remove-on-eject-begin
         options: {
           babelrc: false,
-          presets: [require.resolve('babel-preset-react-app')],
+          presets: [require.resolve('babel-preset-react-app'), require.resolve('babel-preset-stage-0')],
+          plugins: [require.resolve('babel-plugin-transform-decorators-legacy')],
         },
         // @remove-on-eject-end
       },
@@ -280,11 +281,4 @@ module.exports = {
       fileName: 'asset-manifest.json'
     })
   ],
-  // Some libraries import Node modules but don't use them in the browser.
-  // Tell Webpack to provide empty mocks for them so importing them works.
-  node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
-  }
-};
+});

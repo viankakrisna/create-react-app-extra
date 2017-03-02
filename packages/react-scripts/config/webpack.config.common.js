@@ -38,11 +38,6 @@ var publicUrl = publicPath.slice(0, -1);
 // Get environment variables to inject into our app.
 var env = getClientEnvironment(publicUrl);
 
-// Fall back to development if not production
-if (env.stringified['process.env'].NODE_ENV !== '"production"') {
-  process.env.NODE_ENV = 'development';
-}
-
 // Note: defined here because it will be used more than once.
 const cssFilename = 'static/css/' +
   process.env.NODE_ENV +
@@ -60,25 +55,6 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 // This is the watching configuration.
 // It defaults to development mode for quick iteration
 module.exports = {
-  watch: true,
-  context: paths.appSrc,
-  devtool: isProduction() ? 'source-map' : 'cheap-module-source-map',
-  // There are no support for live reloading changes in this mode
-  entry: [require.resolve('./polyfills'), paths.appIndexJs],
-  output: {
-    // The build folder.
-    path: paths.appBuild,
-    // Generated JS file names (with nested folders).
-    // There will be one main bundle, and one file per asynchronous chunk.
-    // We don't currently advertise code splitting but Webpack supports it.
-    // There's prefix in the filename to identify which NODE_ENV generated this build
-    filename: 'static/js/' + process.env.NODE_ENV + '.[name].[chunkhash:8].js',
-    chunkFilename: (
-      'static/js/' + process.env.NODE_ENV + '.[name].[chunkhash:8].chunk.js'
-    ),
-    // We inferred the "public path" (such as / or /my-project) from homepage.
-    publicPath: publicPath
-  },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
     // We read `NODE_PATH` environment variable in `paths.js` and pass paths here.
@@ -296,11 +272,4 @@ module.exports = {
       fileName: 'asset-manifest.json'
     })
   ].filter(Boolean), // remove falsy plugin on development
-  // Some libraries import Node modules but don't use them in the browser.
-  // Tell Webpack to provide empty mocks for them so importing them works.
-  node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
-  }
 };

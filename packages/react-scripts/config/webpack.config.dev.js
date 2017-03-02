@@ -16,6 +16,7 @@ var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 var WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 var getClientEnvironment = require('./env');
+var common = require('./webpack.config.common');
 var paths = require('./paths');
 var vendorHash = require('../utils/vendorHash')
 // @remove-on-eject-begin
@@ -36,7 +37,7 @@ var env = getClientEnvironment(publicUrl);
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
-module.exports = {
+module.exports = Object.assign(common, {
   // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
   // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
   devtool: 'cheap-module-source-map',
@@ -126,6 +127,18 @@ module.exports = {
         }],
         include: paths.appSrc
       },
+      {
+        test: /(\.scss|\.sass)$/,
+        loader: "style!css!postcss!sass"
+      },
+      {
+        test: /\.less$/,
+        loader: "style!css!postcss!less"
+      },
+      {
+        test: /\.styl/,
+        loader: 'style!css!postcss!stylus'
+      },
       // ** ADDING/UPDATING LOADERS **
       // The "url" loader handles all assets unless explicitly excluded.
       // The `exclude` list *must* be updated with every change to loader extensions.
@@ -139,6 +152,9 @@ module.exports = {
           /\.html$/,
           /\.(js|jsx)$/,
           /\.css$/,
+          /(\.scss|\.sass)$/,
+          /\.less$/,
+          /\.styl$/,
           /\.json$/,
           /\.svg$/
         ],
@@ -156,7 +172,8 @@ module.exports = {
         options: {
           // @remove-on-eject-begin
           babelrc: false,
-          presets: [require.resolve('babel-preset-react-app')],
+          presets: [require.resolve('babel-preset-react-app'), require.resolve('babel-preset-stage-0')],
+          plugins: [require.resolve('babel-plugin-transform-decorators-legacy')],
           // @remove-on-eject-end
           // This is a feature of `babel-loader` for webpack (not Babel itself).
           // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -175,7 +192,10 @@ module.exports = {
           'style-loader', {
             loader: 'css-loader',
             options: {
-              importLoaders: 1
+              importLoaders: 1,
+              modules: 1,
+              camelCase: 1,
+              localIdentName: '[name]_[local]_[hash:base64:5]'
             }
           }, {
             loader: 'postcss-loader',
@@ -252,4 +272,4 @@ module.exports = {
   performance: {
     hints: false
   }
-};
+});
