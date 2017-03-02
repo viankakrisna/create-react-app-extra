@@ -1,8 +1,6 @@
-// 20170302221737
-// https://unpkg.com/react-scripts-extra@0.0.1/package.json
 {
   "name": "react-scripts-extra",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Configuration and scripts for Create React App with extra features.",
   "repository": "viankakrisna/create-react-app/tree/extra",
   "license": "BSD-3-Clause",
