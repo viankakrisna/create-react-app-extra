@@ -38,6 +38,7 @@ module.exports = function(
   appPackage.scripts = {
     start: 'react-scripts start',
     build: 'react-scripts build',
+    watch: 'react-scripts watch',
     test: 'react-scripts test --env=jsdom',
     eject: 'react-scripts eject',
   };
