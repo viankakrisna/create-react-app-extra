@@ -28,7 +28,6 @@ const getProcessForPort = require('react-dev-utils/getProcessForPort');
 const openBrowser = require('react-dev-utils/openBrowser');
 const prompt = require('react-dev-utils/prompt');
 const paths = require('../config/paths');
-const config = require('../config/webpack.config.dev');
 const devServerConfig = require('../config/webpackDevServer.config');
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const addWebpackMiddleware = require('./utils/addWebpackMiddleware');
@@ -52,6 +51,7 @@ function run(port) {
     clearConsole();
   }
   bundleVendorIfStale(() => {
+    const config = require('../config/webpack.config.dev');
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const host = process.env.HOST || 'localhost';
 

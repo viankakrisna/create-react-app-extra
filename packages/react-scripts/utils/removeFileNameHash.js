@@ -1,3 +1,4 @@
+'use strict';
 var paths = require('../config/paths');
 // Input: /User/dan/app/build/static/js/main.82be8.js
 // Output: /static/js/main.js

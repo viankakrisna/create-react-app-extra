@@ -8,7 +8,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 // @remove-on-eject-end
-"use strict"
-module.exports = function isProduction(){
-    return process.env.NODE_ENV === 'production'
-}
+'use strict';
+module.exports = function isProduction() {
+  return process.env.NODE_ENV === 'production';
+};

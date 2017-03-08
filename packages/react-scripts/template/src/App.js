@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import logo from "./logo.svg";
-import s from "./App.css";
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import s from './App.css';
 
 // decorators
 function addProps(props) {
@@ -11,19 +11,19 @@ function addProps(props) {
   };
 }
 
-@addProps({ name: "Foo Bar" })
+@addProps({ name: 'Foo Bar' })
 class App extends Component {
   state = {
-    counter: 0
+    counter: 0,
   };
   increment = () => {
     this.setState({
-      counter: this.state.counter + 1
+      counter: this.state.counter + 1,
     });
   };
   decrement = () => {
     this.setState({
-      counter: this.state.counter - 1
+      counter: this.state.counter - 1,
     });
   };
   render() {

@@ -11,12 +11,10 @@
 const babelJest = require('babel-jest');
 
 module.exports = babelJest.createTransformer({
-<<<<<<< HEAD
-  presets: [require.resolve('babel-preset-react-app'), require.resolve('babel-preset-stage-0')],
-plugins: [require.resolve('babel-plugin-transform-decorators-legacy')],
-  babelrc: false
-=======
-  presets: [require.resolve('babel-preset-react-app')],
+  presets: [
+    require.resolve('babel-preset-react-app'),
+    require.resolve('babel-preset-stage-0'),
+  ],
+  plugins: [require.resolve('babel-plugin-transform-decorators-legacy')],
   babelrc: false,
->>>>>>> watch
 });
