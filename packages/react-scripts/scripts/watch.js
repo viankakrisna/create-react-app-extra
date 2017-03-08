@@ -8,100 +8,110 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 // @remove-on-eject-end
-process.env.NODE_ENV = "development";
+'use strict';
+process.env.NODE_ENV = 'development';
 
 // Load environment variables from .env file. Suppress warnings using silent
 // if this file is missing. dotenv will never modify any environment variables
 // that have already been set.
 // https://github.com/motdotla/dotenv
-require("dotenv").config({ silent: true });
+require('dotenv').config({ silent: true });
 
-var chalk = require("chalk");
-var fs = require("fs-extra");
-var path = require("path");
-var gzipSize = require("gzip-size").sync;
-var webpack = require("webpack");
-var readFilesInFolder = require("recursive-readdir");
-var difference = require("lodash/difference");
+const chalk = require('chalk');
+const fs = require('fs-extra');
+const webpack = require('webpack');
 
-var config = require("../config/webpack.config.watch");
-var paths = require("../config/paths");
+const paths = require('../config/paths');
 
-var clearConsole = require("react-dev-utils/clearConsole");
-var checkRequiredFiles = require("react-dev-utils/checkRequiredFiles");
-var formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
+const clearConsole = require('react-dev-utils/clearConsole');
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+const cleanBuildFolder = require('react-dev-utils/cleanBuildFolder');
+const prompt = require('react-dev-utils/prompt');
+const bundleVendorIfStale = require('../utils/bundleVendorIfStale');
 
-var printFileSizes = require("../utils/printFileSizes");
-var copyPublicFolder = require("../utils/copyPublicFolder");
-var removeFileNameHash = require("../utils/removeFileNameHash");
-var bundleVendorIfStale = require("../utils/bundleVendorIfStale");
+const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
+const measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
+const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
 
-var useYarn = fs.existsSync(paths.yarnLockFile);
-var cli = useYarn ? "yarn" : "npm";
-var isInteractive = process.stdout.isTTY;
-var echo = console.log; //alias console.log for easier printing
+const useYarn = fs.existsSync(paths.yarnLockFile);
+const cli = useYarn ? 'yarn' : 'npm';
+const isInteractive = process.stdout.isTTY;
+const echo = console.log; //alias console.log for easier printing
 
 // Warn and crash if required files are missing
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
   process.exit(1);
 }
 
-// First, read the current file sizes in build directory.
-// This lets us display how much they changed later.
-bundleVendorIfStale(() => {
-  readFilesInFolder(paths.appBuild, startWatchWithPreviousSizeMap);
+const question = `Note that running in watch mode is slower and only recommended if you need to
+serve the assets with your own back-end in development. It's not recommended if 
+your use case is creating a single page application. Use npm start if that's the case. 
+Also, don't deploy the code before running npm run build.
+
+Continue running in watching mode?`;
+
+clearConsoleIfInteractive();
+prompt(question, true).then(accept => {
+  if (accept) {
+    run();
+  } else {
+    process.exit();
+  }
 });
 
-function startWatchWithPreviousSizeMap(err, fileNames) {
-  // Start the webpack watch mode
-  watch(getPreviousSizeMap());
+function run() {
+  // First, read the current file sizes in build directory.
+  // This lets us display how much they changed later.
+  measureFileSizesBeforeBuild(paths.appBuild)
+    .then(previousFileSizes => {
+      // Start the webpack watch mode
+      watch(previousFileSizes);
+    })
+    .catch(console.log);
 }
 
-function watch(previousSizeMap) {
+function watch(previousFileSizes) {
   clearConsoleIfInteractive();
-  var isFirstCompile = true;
-  var watcher = webpack(config, (err, stats) => {});
-  var compiler = watcher.compiler;
+  bundleVendorIfStale(() => {
+    const config = require('../config/webpack.config.watch');
+    const watcher = webpack(config, () => {});
+    const compiler = watcher.compiler;
 
-  echo("Compiling " + process.env.NODE_ENV + " build...");
-  compiler.plugin(
-    "done",
-    createCompilerDoneHandler(previousSizeMap, isFirstCompile)
-  );
-  compiler.plugin("invalid", handleCompilerInvalid);
+    echo('Compiling ' + process.env.NODE_ENV + ' build...');
+    compiler.plugin('done', createCompilerDoneHandler(previousFileSizes));
+    compiler.plugin('invalid', handleCompilerInvalid);
+  });
 }
 
 function handleCompilerInvalid() {
   clearConsoleIfInteractive();
 
-  echo("Compiling...");
+  echo('Compiling...');
 }
 
-function createCompilerDoneHandler(previousSizeMap, isFirstCompile) {
+function createCompilerDoneHandler(previousFileSizes) {
   return stats => {
     clearConsoleIfInteractive();
-    readFilesInFolder(
-      paths.appBuild,
-      cleanUpAndPrintMessages(stats, previousSizeMap, isFirstCompile)
-    );
+    cleanUpAndPrintMessages(stats, previousFileSizes);
   };
 }
 
-function cleanUpAndPrintMessages(stats, previousSizeMap, isFirstCompile) {
-  return (err, fileNames) => {
-    deleteStaleAssets(fileNames, stats); // Delete stale files
+function cleanUpAndPrintMessages(stats, previousFileSizes) {
+  cleanBuildFolder(paths.appBuild, stats).then(removedFiles => {
+    if (removedFiles.length) {
+      console.log(
+        'Deleting up old assets in the build folder:\n',
+        removedFiles.join('\n')
+      );
+    }
     copyPublicFolder(); // Update public folder
 
-    var messages = formatWebpackMessages(stats.toJson({}, true));
-    var isSuccessful = !messages.errors.length && !messages.warnings.length;
+    const messages = formatWebpackMessages(stats.toJson({}, true));
+    const isSuccessful = !messages.errors.length && !messages.warnings.length;
 
     if (isSuccessful) {
-      printWatchSuccessMessage(
-        messages,
-        stats,
-        previousSizeMap,
-        isFirstCompile
-      );
+      printWatchSuccessMessage(messages, stats, previousFileSizes);
       return printWaitingChanges();
     }
 
@@ -116,11 +126,11 @@ function cleanUpAndPrintMessages(stats, previousSizeMap, isFirstCompile) {
       printWarnings(messages);
       return printWaitingChanges();
     }
-  };
+  });
 }
 
 function printErrors(messages) {
-  echo(chalk.red("Failed to compile."));
+  echo(chalk.red('Failed to compile.'));
   echo();
   messages.errors.forEach(message => {
     echo(message);
@@ -128,62 +138,49 @@ function printErrors(messages) {
   });
 }
 
-function printWatchSuccessMessage(
-  messages,
-  stats,
-  previousSizeMap,
-  isFirstCompile
-) {
+function printWatchSuccessMessage(messages, stats, previousFileSizes) {
   echo(
     [
       chalk.green(
-        "Successfully compiled a " + process.env.NODE_ENV + " build."
+        'Successfully compiled a ' + process.env.NODE_ENV + ' build.'
       ),
-      "",
-      "You can access the compiled files in",
+      '',
+      'You can access the compiled files in',
       paths.appBuild,
-      "",
-      "File sizes after gzip:",
-      ""
-    ].join("\n")
+      '',
+      'File sizes after gzip:',
+      '',
+    ].join('\n')
   );
-  printFileSizes(stats, previousSizeMap);
-  if (isFirstCompile) {
-    echo(
-      chalk.yellow(
-        [
-          "",
-          "Note that running in watch mode is slower and only recommended if you need to",
-          "serve the assets with your own back-end in development.",
-          ""
-        ].join("\n")
-      )
-    );
-    echo(
-      "To create a development server, use " + chalk.cyan(cli + " start") + "."
-    );
-    isFirstCompile = false;
-  }
+  printFileSizesAfterBuild(stats, previousFileSizes);
+  echo(
+    'To start a development server, use ' + chalk.cyan(cli + ' start') + '.'
+  );
+  echo(
+    'To create an optimized production build, use ' +
+      chalk.cyan(cli + ' build') +
+      '.'
+  );
 }
 
 function printWarnings(messages) {
-  echo(chalk.yellow("Compiled with warnings."));
+  echo(chalk.yellow('Compiled with warnings.'));
   echo();
   messages.warnings.forEach(message => {
     echo(message);
     echo();
   });
   // Teach some ESLint tricks.
-  echo("You may use special comments to disable some warnings.");
+  echo('You may use special comments to disable some warnings.');
   echo(
-    "Use " +
-      chalk.yellow("// eslint-disable-next-line") +
-      " to ignore the next line."
+    'Use ' +
+      chalk.yellow('// eslint-disable-next-line') +
+      ' to ignore the next line.'
   );
   echo(
-    "Use " +
-      chalk.yellow("/* eslint-disable */") +
-      " to ignore all warnings in a file."
+    'Use ' +
+      chalk.yellow('/* eslint-disable */') +
+      ' to ignore all warnings in a file.'
   );
 }
 
@@ -193,35 +190,17 @@ function clearConsoleIfInteractive() {
   }
 }
 
-function previousSizeMapReducer(memo, fileName) {
-  var contents = fs.readFileSync(fileName);
-  var key = removeFileNameHash(fileName);
-  memo[key] = gzipSize(contents);
-  return memo;
-}
-
 function printWaitingChanges() {
   echo();
   echo(
-    "Waiting for changes in",
-    paths.appSrc.replace(process.cwd(), ".") + "/"
+    'Waiting for changes in',
+    paths.appSrc.replace(process.cwd(), '.') + '/'
   );
 }
 
-function deleteStaleAssets(fileNames, stats) {
-  var assets = stats.toJson().assets;
-  var assetFileNames = assets
-    .map(asset => path.join(paths.appBuild, asset.name))
-    .filter(Boolean);
-  var differences = difference(
-    assetFileNames,
-    fileNames
-  ).map(file => fs.unlinkSync(file));
-  return differences;
-}
-
-function getPreviousSizeMap(fileNames) {
-  return (fileNames || [])
-    .filter(fileName => /\.(js|css)$/.test(fileName))
-    .reduce(previousSizeMapReducer, {});
+function copyPublicFolder() {
+  fs.copySync(paths.appPublic, paths.appBuild, {
+    dereference: true,
+    filter: file => file !== paths.appHtml,
+  });
 }
