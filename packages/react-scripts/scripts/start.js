@@ -48,6 +48,9 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
 
 function run(port) {
+  if (isInteractive) {
+    clearConsole();
+  }
   bundleVendorIfStale(() => {
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const host = process.env.HOST || 'localhost';
@@ -83,9 +86,6 @@ function run(port) {
         return console.log(err);
       }
 
-      if (isInteractive) {
-        clearConsole();
-      }
       console.log(chalk.cyan('Starting the development server...'));
       console.log();
 
