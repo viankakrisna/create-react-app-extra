@@ -132,7 +132,7 @@ module.exports = {
               useEslintrc: false,
             },
             // @remove-on-eject-end
-            loader: 'eslint-loader',
+            loader: 'eslint-loader-fs-cache',
           },
         ],
         include: paths.appSrc,
