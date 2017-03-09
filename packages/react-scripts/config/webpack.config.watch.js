@@ -18,7 +18,7 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
-const isProduction = require('react-dev-utils/isProduction');
+const isProduction = require('../utils/isProduction');
 const vendorHash = require('../utils/vendorHash');
 
 // @remove-on-eject-begin
@@ -61,7 +61,7 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 module.exports = {
   watch: true,
   context: paths.appSrc,
-  devtool: isProduction() ? 'source-map' : 'cheap-module-source-map',
+  devtool: 'cheap-module-source-map',
   // There are no support for live reloading changes in this mode
   entry: [require.resolve('./polyfills'), paths.appIndexJs],
   output: {

@@ -1,6 +1,6 @@
 {
   "name": "react-scripts-extra",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Configuration and scripts for Create React App with extra features.",
   "repository": "viankakrisna/create-react-app/tree/extra",
   "license": "BSD-3-Clause",
@@ -20,7 +20,7 @@
     "utils"
   ],
   "bin": {
-    "react-scripts": "./bin/react-scripts.js"
+    "react-scripts-extra": "./bin/react-scripts-extra.js"
   },
   "dependencies": {
     "autoprefixer": "6.7.5",
