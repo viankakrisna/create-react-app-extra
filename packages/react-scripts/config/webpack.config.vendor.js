@@ -9,6 +9,8 @@ const publicPath = paths.servedPath;
 const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
 const vendorGlobalName = '[name]' + vendorHash.replace(/\./g, '');
+const ManifestPlugin = require('webpack-manifest-plugin');
+
 module.exports = {
   cache: true,
   entry: {
@@ -78,6 +80,13 @@ module.exports = {
           sourceMap: true,
         })
       : null,
+    // Generate a manifest file which contains a mapping of all asset filenames
+    // to their corresponding output file so that tools can pick it up without
+    // having to parse `index.html`.
+    // We also read this file to delete stale files in build folder
+    new ManifestPlugin({
+      fileName: 'vendor-manifest.json',
+    }),
   ].filter(Boolean),
   node: {
     fs: 'empty',
