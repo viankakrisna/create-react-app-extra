@@ -26,8 +26,9 @@ const paths = require('../config/paths');
 const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
-const cleanBuildFolder = require('react-dev-utils/cleanBuildFolder');
 const prompt = require('react-dev-utils/prompt');
+
+const cleanBuildFolder = require('../utils/cleanBuildFolder');
 const bundleVendorIfStale = require('../utils/bundleVendorIfStale');
 
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
