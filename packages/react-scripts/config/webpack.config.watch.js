@@ -79,6 +79,7 @@ module.exports = {
     publicPath: publicPath,
   },
   resolve: {
+    '~': path.resolve(paths.appSrc),
     // This allows you to set a fallback for where Webpack should look for modules.
     // We read `NODE_PATH` environment variable in `paths.js` and pass paths here.
     // We placed these paths second because we want `node_modules` to "win"

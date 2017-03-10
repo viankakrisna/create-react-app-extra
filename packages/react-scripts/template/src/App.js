@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import s from './App.css';
+import logo from '~/logo.svg';
+import s from '~/App.css';
 
 // decorators
 function addProps(props) {
