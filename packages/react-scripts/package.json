@@ -1,6 +1,6 @@
 {
   "name": "react-scripts-extra",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Configuration and scripts for Create React App with extra features.",
   "repository": "viankakrisna/create-react-app/tree/extra",
   "license": "BSD-3-Clause",
