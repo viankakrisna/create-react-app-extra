@@ -1,6 +1,6 @@
 # Create React App Extra 
 
-This is a collection of features that is currently not enabled in create-react-app
+This is a fork of `create-react-app` with a collection of features that is currently not enabled in it.
 
 Notably:
 - SASS/SCSS
