@@ -21,7 +21,7 @@ temp_app_path=`mktemp -d 2>/dev/null || mktemp -d -t 'temp_app_path'`
 
 function cleanup {
   echo 'Cleaning up.'
-  ps -ef | grep 'react-scripts' | grep -v grep | awk '{print $2}' | xargs kill -s 9
+  ps -ef | grep 'react-scripts-extra' | grep -v grep | awk '{print $2}' | xargs kill -s 9
   cd "$root_path"
   # TODO: fix "Device or resource busy" and remove ``|| $CI`
   rm -rf "$temp_cli_path" $temp_app_path || $CI
@@ -42,7 +42,7 @@ function handle_exit {
 }
 
 function create_react_app {
-  node "$temp_cli_path"/node_modules/create-react-app/index.js "$@"
+  node "$temp_cli_path"/node_modules/create-react-app-extra/index.js "$@"
 }
 
 # Check for the existence of one or more files.
@@ -75,15 +75,15 @@ then
 fi
 
 # ******************************************************************************
-# First, pack react-scripts and create-react-app so we can use them.
+# First, pack react-scripts-extra and create-react-app-extra so we can use them.
 # ******************************************************************************
 
 # Pack CLI
-cd "$root_path"/packages/create-react-app
+cd "$root_path"/packages/create-react-app-extra
 cli_path=$PWD/`npm pack`
 
-# Go to react-scripts
-cd "$root_path"/packages/react-scripts
+# Go to react-scripts-extra
+cd "$root_path"/packages/react-scripts-extra
 
 # Save package.json because we're going to touch it
 cp package.json package.json.orig
@@ -92,8 +92,8 @@ cp package.json package.json.orig
 # of those packages.
 node "$root_path"/tasks/replace-own-deps.js
 
-# Finally, pack react-scripts
-scripts_path="$root_path"/packages/react-scripts/`npm pack`
+# Finally, pack react-scripts-extra
+scripts_path="$root_path"/packages/react-scripts-extra/`npm pack`
 
 # Restore package.json
 rm package.json
@@ -109,10 +109,10 @@ npm install "$cli_path"
 
 # Install the app in a temporary location
 cd $temp_app_path
-create_react_app --scripts-version="$scripts_path" --internal-testing-template="$root_path"/packages/react-scripts/fixtures/kitchensink test-kitchensink
+create_react_app --scripts-version="$scripts_path" --internal-testing-template="$root_path"/packages/react-scripts-extra/fixtures/kitchensink test-kitchensink
 
 # ******************************************************************************
-# Now that we used create-react-app to create an app depending on react-scripts,
+# Now that we used create-react-app-extra to create an app depending on react-scripts-extra,
 # let's make sure all npm scripts are in the working state.
 # ******************************************************************************
 
@@ -120,7 +120,7 @@ create_react_app --scripts-version="$scripts_path" --internal-testing-template="
 cd test-kitchensink
 
 # Link to our preset
-npm link "$root_path"/packages/babel-preset-react-app
+npm link "$root_path"/packages/babel-preset-react-app-extra
 
 # Test the build
 REACT_APP_SHELL_ENV_MESSAGE=fromtheshell \
@@ -172,16 +172,16 @@ E2E_FILE=./build/index.html \
 # ******************************************************************************
 
 # Unlink our preset
-npm unlink "$root_path"/packages/babel-preset-react-app
+npm unlink "$root_path"/packages/babel-preset-react-app-extra
 
 # Eject...
 echo yes | npm run eject
 
 # ...but still link to the local packages
-npm link "$root_path"/packages/babel-preset-react-app
-npm link "$root_path"/packages/eslint-config-react-app
-npm link "$root_path"/packages/react-dev-utils
-npm link "$root_path"/packages/react-scripts
+npm link "$root_path"/packages/babel-preset-react-app-extra
+npm link "$root_path"/packages/eslint-config-react-app-extra
+npm link "$root_path"/packages/react-dev-utils-extra
+npm link "$root_path"/packages/react-scripts-extra
 
 # Test the build
 REACT_APP_SHELL_ENV_MESSAGE=fromtheshell \
